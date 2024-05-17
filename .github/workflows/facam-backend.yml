@@ -112,6 +112,6 @@ jobs:
         run: |
           ECR_REGISTRY="${{ needs.ecr-build-push.outputs.ecr_registry }}"
           ECR_BACKEND_IMAGE="${{ needs.ecr-build-push.outputs.ecr_image }}"
-          IMAGE_VERSION="${{ needs.ecr-build-push.outputs.image_version }}"
-          echo "Deploying $ECR_BACKEND_IMAGE:$IMAGE_VERSION to ECS..."
+#          IMAGE_VERSION="${{ needs.ecr-build-push.outputs.image_version }}"
+#          echo "Deploying $ECR_BACKEND_IMAGE:$IMAGE_VERSION to ECS..."
 #          Add your ECS deployment commands here
