@@ -76,7 +76,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_BACKEND_IMAGE: facam_backend #${{ secrets.ECR_BACKEND_IMAGE }}
+          ECR_BACKEND_IMAGE: ${{ secrets.ECR_BACKEND_IMAGE }}
         run: |
           VERSION=$(echo ${{ github.sha }} | cut -c1-8)
           echo VERSION=$VERSION
