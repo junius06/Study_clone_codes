@@ -15,6 +15,9 @@ on:
   #     tags:
   #       description: 'Test scenario tags'
 
+env:
+  LOCAL_PATH: facam-backend
+
 jobs:
   mvn-build:
     name: mvn-build
@@ -29,7 +32,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build with Maven
-        run: mvn -B package --file ./facam-backend/pom.xml
+        run: mvn -B package --file ./${{ env.LOCAL_PATH }}/pom.xml
 
   ecr-build-push:
     name: ecr-build-push
@@ -61,15 +64,15 @@ jobs:
           VERSION=$(echo ${{ github.sha }} | cut -c1-8)
           echo VERSION=$VERSION
           echo "::set-output name=version::$VERSION"
-          docker build -t $ECR_REGISTRY/$ECR_BACKEND_IMAGE:$VERSION .
+          docker build -f ./${{ env.LOCAL_PATH }}/Dockerfile -t $ECR_REGISTRY/$ECR_BACKEND_IMAGE:$VERSION .
           docker push $ECR_REGISTRY/$ECR_BACKEND_IMAGE:$VERSION
   
-  # ecs-deploy:
-  #   name: ecs-deploy
-  #   runs-on: ubuntu-latest
-  #   needs: ecr-build-push
-  #   environment: development
+  ecs-deploy:
+    name: ecs-deploy
+    runs-on: ubuntu-latest
+    needs: ecr-build-push
+    environment: development
 
-  #   steps:
-  #     - name: Configure AWS credentials
-  #       uses: 
+    steps:
+      - name: Configure AWS credentials
+        uses: 
