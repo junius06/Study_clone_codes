@@ -90,9 +90,9 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_BACKEND_IMAGE: ${{ secrets.ECR_BACKEND_IMAGE }}
         run: |
-          echo VERSION=$VERSION
-          docker build -f ./${{ env.LOCAL_PATH }}/Dockerfile -t $ECR_REGISTRY/$ECR_BACKEND_IMAGE:${{ steps.version.outputs.new_tag }} .
-          docker push $ECR_REGISTRY/$ECR_BACKEND_IMAGE:${{ steps.version.outputs.new_tag }}
+          echo VERSION=${{ steps.set-version.outputs.version }}
+          docker build -f ./${{ env.LOCAL_PATH }}/Dockerfile -t $ECR_REGISTRY/$ECR_BACKEND_IMAGE:$VERSION .
+          docker push $ECR_REGISTRY/$ECR_BACKEND_IMAGE:$VERSION
   
   ecs-deploy:
     name: ecs-deploy
