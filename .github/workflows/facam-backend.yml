@@ -3,7 +3,7 @@ name: facam backend Workflow
 on:
   push:
     branches:
-      - main
+      - v1.0.1
     # paths:
     #   - 'facam-backend/**'
   # workflow_dispatch: # production
