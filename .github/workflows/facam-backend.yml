@@ -34,11 +34,29 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file ./${{ env.LOCAL_PATH }}/pom.xml
 
+  # aws-credentials:
+  #   name: aws-credentials
+  #   runs-on: ubuntu-latest
+  #   environment: development
+
+  #   steps:
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with: 
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+
   ecr-build-push:
     name: ecr-build-push
     runs-on: ubuntu-latest
     needs: mvn-build
     environment: development
+
+    outputs:
+      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
+      ecr_image: ${{ env.ECR_BACKEND_IMAGE }}
+      image_version: ${{ steps.set-version.outputs.version }}
 
     steps:
       - name: Checkout Repo
@@ -59,7 +77,6 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_BACKEND_IMAGE: facam_backend #${{ secrets.ECR_BACKEND_IMAGE }}
-         # IMAGE_TAG: ${{ github.sha }}
         run: |
           VERSION=$(echo ${{ github.sha }} | cut -c1-8)
           echo VERSION=$VERSION
@@ -75,4 +92,16 @@ jobs:
 
     steps:
       - name: Configure AWS credentials
-        uses: 
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to ECS
+        run: |
+          ECR_REGISTRY="${{ needs.ecr-build-push.outputs.ecr_registry }}"
+          ECR_BACKEND_IMAGE="${{ needs.ecr-build-push.outputs.ecr_image }}"
+          IMAGE_VERSION="${{ needs.ecr-build-push.outputs.image_version }}"
+          echo "Deploying $ECR_BACKEND_IMAGE:$IMAGE_VERSION to ECS..."
+#          Add your ECS deployment commands here
