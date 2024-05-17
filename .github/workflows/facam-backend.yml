@@ -55,7 +55,7 @@ jobs:
 
     outputs:
       ecr_registry: ${{ steps.login-ecr.outputs.registry }}
-      ecr_image: ${{ env.ECR_BACKEND_IMAGE }}
+      ecr_backend_image: ${{ env.ECR_BACKEND_IMAGE }}
       image_version: ${{ steps.set-version.outputs.version }}
 
     steps:
@@ -109,8 +109,6 @@ jobs:
 
       - name: Deploy to ECS
         run: |
-          ECR_REGISTRY="${{ needs.ecr-build-push.outputs.ecr_registry }}"
-          ECR_BACKEND_IMAGE="${{ needs.ecr-build-push.outputs.ecr_backend_image }}"
-          echo $ECR_REGISTRY/$CR_BACKEND_IMAGE
-#          IMAGE_VERSION="${{ needs.ecr-build-push.outputs.image_version }}"
-#          echo "Deploying $ECR_BACKEND_IMAGE:$IMAGE_VERSION to ECS..."
+          ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
+          ECR_BACKEND_IMAGE="${{ secrets.ECR_BACKEND_IMAGE }}"
+          echo $ECR_REGISTRY/$ECR_BACKEND_IMAGE:latest
