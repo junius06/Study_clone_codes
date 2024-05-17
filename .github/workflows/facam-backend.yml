@@ -5,7 +5,7 @@ on:
     branches:
       - main
     # paths:
-    #   - 'facam-backend/**'
+    #   - 'facam/backend/**'
   # workflow_dispatch: # production
   #   inputs:
   #     logLevel:
@@ -16,7 +16,7 @@ on:
   #       description: 'Test scenario tags'
 
 env:
-  LOCAL_PATH: facam-backend
+  LOCAL_PATH: facam/backend
 
 jobs:
   mvn-build:
