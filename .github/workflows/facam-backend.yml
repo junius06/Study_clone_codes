@@ -16,9 +16,9 @@ on:
   #       description: 'Test scenario tags'
 
 env:
-  AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: facam-backend # set this to your Amazon ECR repository name
-  KUBE_NAMESPACE: ecs-cluster
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: facam-backend
+  ECS_NAMESPACE: ecs-cluster
 
 jobs:
   mvn-build:
