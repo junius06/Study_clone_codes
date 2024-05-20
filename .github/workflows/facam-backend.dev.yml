@@ -1,4 +1,4 @@
-name: facam backend Workflow
+name: facam backend workflow
 
 on:
   push:
@@ -17,6 +17,10 @@ on:
 
 env:
   LOCAL_PATH: facam-backend
+  ECS_SERVICE: facam-svc
+  ECS_CLUSTER: ecs-clusterASG
+  ECS_TASK_DEFINITION: facam-task
+  CONTAINER_NAME: facam-backend
 
 jobs:
   mvn-build:
@@ -115,7 +119,6 @@ jobs:
         run: |
           ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
           ECR_BACKEND_IMAGE="${{ secrets.ECR_BACKEND_IMAGE }}"
-          echo $ECR_REGISTRY/$ECR_BACKEND_IMAGE:latest
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
