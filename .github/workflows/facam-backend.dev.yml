@@ -131,7 +131,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def-json.outputs.task-definition }} #task-definition.json
+          task-definition: ${{ steps.task-def-json.outputs.task-definition-json }} #task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
