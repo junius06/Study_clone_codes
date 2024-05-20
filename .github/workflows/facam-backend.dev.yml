@@ -59,7 +59,7 @@ jobs:
 
     outputs:
       ecr_registry: ${{ steps.login-ecr.outputs.registry }}
-      ecr_backend_image: ${{ env.ECR_BACKEND_IMAGE }}
+      ecr_backend_image: ${{ steps.build-image.outputs.ECR_BACKEND_IMAGE }}
       image_version: ${{ steps.set-version.outputs.version }}
 
     steps:
@@ -90,9 +90,11 @@ jobs:
       #     echo "::set-output name=new_tag::$NEW_TAG"
 
       - name: Build and push image to Amazon ECR
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_BACKEND_IMAGE: ${{ secrets.ECR_BACKEND_IMAGE }}
+          # IMAGE_TAG: ${{  }}
         run: | # VERSION=${{ steps.version.outputs.new_tag }}
           docker build -f ./${{ env.LOCAL_PATH }}/Dockerfile -t $ECR_REGISTRY/$ECR_BACKEND_IMAGE:latest .
           docker push $ECR_REGISTRY/$ECR_BACKEND_IMAGE:latest
