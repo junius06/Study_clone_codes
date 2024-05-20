@@ -19,8 +19,8 @@ env:
   LOCAL_PATH: facam-backend
   ECS_SERVICE: facam-svc
   ECS_CLUSTER: ecs-clusterASG
-  ECS_TASK_DEFINITION: facam-task
-  CONTAINER_NAME: facam-backend
+  ECS_TASK_DEFINITION: arn:aws:ecs:ap-northeast-2:595111008737:task-definition/facam-task:1
+  CONTAINER_NAME: backend
 
 jobs:
   mvn-build:
