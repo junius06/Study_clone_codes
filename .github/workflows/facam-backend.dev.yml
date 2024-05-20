@@ -124,14 +124,13 @@ jobs:
         id: task-def-json
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
-          echo "task-definition-json=task-definition.json" >> $GITHUB_ENV
-#          echo "task-definition=$task-definition" >> $GITHUB_OUTPUT
+#          echo "task-definition-json=task-definition.json" >> $GITHUB_OUTPUT
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def-json.outputs.task-definition-json }} #task-definition.json
+          task-definition: task-definition.json #${{ steps.task-def-json.outputs.task-definition-json }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
