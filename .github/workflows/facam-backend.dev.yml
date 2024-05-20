@@ -124,6 +124,7 @@ jobs:
         id: task-def-json
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+          cat task-definition.json
           task-definition=$(cat task-definition.json)
           echo "task-definition=$task-definition" >> $GITHUB_OUTPUT
 
