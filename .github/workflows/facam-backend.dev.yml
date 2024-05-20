@@ -18,7 +18,7 @@ on:
 env:
   LOCAL_PATH: facam-backend
   ECS_SERVICE: facam-svc
-  ECS_CLUSTER: ecs-clusterASG
+  ECS_CLUSTER: ecs-cluster
   ECS_TASK_DEFINITION: facam-task
   CONTAINER_NAME: backend
 
