@@ -132,7 +132,7 @@ jobs:
         with:
           task-definition: task-definition.json #${{ steps.task-def-json.outputs.task-definition-json }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          image: ${{ needs.ecr-build-push.outputs.ecr_backend_image }}
 
       - name: Deploy AWS ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
