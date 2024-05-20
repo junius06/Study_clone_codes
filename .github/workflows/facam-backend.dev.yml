@@ -123,8 +123,9 @@ jobs:
       - name: Download task definition
         id: task-def-json
         run: |
-          task-definition=`aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json`      
-          echo "task-definition=$task-definition" >> $GITHUB_OUTPUT
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+          echo "task-definition-json=task-definition.json" >> $GITHUB_ENV
+#          echo "task-definition=$task-definition" >> $GITHUB_OUTPUT
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
