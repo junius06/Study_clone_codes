@@ -19,7 +19,7 @@ env:
   LOCAL_PATH: facam-backend
   ECS_SERVICE: facam-svc
   ECS_CLUSTER: ecs-clusterASG
-  ECS_TASK_DEFINITION: arn:aws:ecs:ap-northeast-2:595111008737:task-definition/facam-task:1
+  ECS_TASK_DEFINITION: facam-task
   CONTAINER_NAME: backend
 
 jobs:
@@ -119,6 +119,10 @@ jobs:
         run: |
           ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
           ECR_BACKEND_IMAGE="${{ secrets.ECR_BACKEND_IMAGE }}"
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
