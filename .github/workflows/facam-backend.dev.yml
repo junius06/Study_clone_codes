@@ -59,7 +59,7 @@ jobs:
 
     outputs:
       ecr_registry: ${{ steps.login-ecr.outputs.registry }}
-      ecr_backend_image: ${{ steps.build-image.outputs.ECR_BACKEND_IMAGE }}
+      ecr_backend_image: ${{ secrets.ECR_BACKEND_IMAGE }}
       image_version: ${{ steps.set-version.outputs.version }}
 
     steps:
