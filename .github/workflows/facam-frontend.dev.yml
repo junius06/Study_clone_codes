@@ -1,0 +1,103 @@
+name: facam frontend workflow
+
+on:
+  push:
+    branches:
+      - main
+    # facam-frontend/ 경로 내에서 수정될 경우만 트리거 발생
+    # paths: 
+    #   - 'facam-frontend/**'
+  # workflow_dispatch: # Only Production
+  #   inputs:
+  #     logLevel:
+  #       description: 'Log level'
+  #       required: true
+  #       default: 'warning'
+  #     tags:
+  #       description: 'Test scenario tags'
+
+env:
+  LOCAL_PATH: facam-frontend
+  ECS_SERVICE: facam-svc
+  ECS_CLUSTER: ecs-cluster
+  ECS_TASK_DEFINITION: facam-task
+  CONTAINER_NAME: frontend
+
+jobs:
+  ecr-build-push:
+    name: ecr-build-push
+    runs-on: ubuntu-latest
+    environment: development
+
+    outputs:
+      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
+      ecr_frontend_image: ${{ secrets.ECR_FRONTEND_IMAGE }}
+      image_version: ${{ steps.set-version.outputs.version }}
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_FRONTEND_IMAGE: ${{ secrets.ECR_FRONTEND_IMAGE }}
+        run: |
+          docker build -f ./${{ env.LOCAL_PATH }}/Dockerfile -t $ECR_REGISTRY/$ECR_FRONTEND_IMAGE:latest .
+          docker push $ECR_REGISTRY/$ECR_FRONTEND_IMAGE:latest
+  
+  # ecs-deploy:
+  #   name: ecs-deploy
+  #   runs-on: ubuntu-latest
+  #   needs: ecr-build-push
+  #   environment: development
+
+  #   steps:
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with: 
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+      
+  #     - name: Login to AWS ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v2
+
+  #     - name: Checkout IMAGE information
+  #       run: |
+  #         ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
+  #         ECR_FRONTEND_IMAGE="${{ secrets.ECR_FRONTEND_IMAGE }}"
+
+  #     - name: Download task definition
+  #       id: task-def-json
+  #       run: |
+  #         aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+
+  #     - name: Fill in the new image ID in the Amazon ECS task definition
+  #       id: task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: task-definition.json
+  #         container-name: ${{ env.CONTAINER_NAME }}
+  #         image: ${{ secrets.ECR_FRONTEND_IMAGE }}
+
+  #     - name: Deploy AWS ECS task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  #       with:
+  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
+  #         service: ${{ env.ECS_SERVICE }}
+  #         cluster: ${{ env.ECS_CLUSTER }}
+  #         wait-for-service-stability: true

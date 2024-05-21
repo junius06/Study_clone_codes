@@ -1,0 +1,33 @@
+image: atlassian/default-image:4
+
+options:
+  docker: true
+  size: 2x
+
+definitions:
+  services:
+    docker:
+      memory: 4096
+
+  Configure AWS credentials: &aws_login
+    step:
+      name: 
+      script:
+        - 
+      
+  build and push to ECR: &build
+    step:
+      name: Configure AWS credentials
+      script: 
+        - pipe: atlassian/aws-ecr-push-image:2.4.0
+          # https://bitbucket.org/atlassian/aws-ecr-push-image/src/master/
+          variables:
+            AWS_ACCESS_KEY_ID: '<string>' # Optional if already defined in the context.
+            AWS_SECRET_ACCESS_KEY: '<string>' # Optional if already defined in the context.
+            AWS_DEFAULT_REGION: '<string>' # Optional if already defined in the context.
+            IMAGE_NAME: "<string>"
+
+pipelines:
+  branches:
+    main:
+      - <<: *build
